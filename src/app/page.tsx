@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { AdvocateType } from "./types/apiEntities";
 
 export default function Home() {
   const [advocates, setAdvocates] = useState([]);
@@ -22,14 +23,25 @@ export default function Home() {
     document.getElementById("search-term").innerHTML = searchTerm;
 
     console.log("filtering advocates...");
-    const filteredAdvocates = advocates.filter((advocate) => {
+    const filteredAdvocates = advocates.filter((advocate: AdvocateType) => {
+      const firstName = advocate.firstName || "";
+      const lastName = advocate.lastName || "";
+      const city = advocate.city || "";
+      const degree = advocate.degree || "";
+      const specialties = advocate.specialties || [];
+      const phoneNumber = advocate.phoneNumber ? 
+      advocate.phoneNumber.toString() : "";
+      const yearsOfExperience = advocate.yearsOfExperience
+        ? advocate.yearsOfExperience.toString()
+        : "";
       return (
-        advocate.firstName.includes(searchTerm) ||
-        advocate.lastName.includes(searchTerm) ||
-        advocate.city.includes(searchTerm) ||
-        advocate.degree.includes(searchTerm) ||
-        advocate.specialties.includes(searchTerm) ||
-        advocate.yearsOfExperience.includes(searchTerm)
+       firstName.includes(searchTerm) ||
+        lastName.includes(searchTerm) ||
+        city.includes(searchTerm) ||
+        degree.includes(searchTerm) ||
+        specialties.some(str => str && str.includes(searchTerm)) ||
+        phoneNumber.includes(searchTerm) ||
+        yearsOfExperience.includes(searchTerm)
       );
     });
 
@@ -37,7 +49,6 @@ export default function Home() {
   };
 
   const onClick = () => {
-    console.log(advocates);
     setFilteredAdvocates(advocates);
   };
 
@@ -67,7 +78,7 @@ export default function Home() {
           <th>Phone Number</th>
         </thead>
         <tbody>
-          {filteredAdvocates.map((advocate) => {
+          {filteredAdvocates.map((advocate: AdvocateType) => {
             return (
               <tr>
                 <td>{advocate.firstName}</td>
@@ -75,7 +86,7 @@ export default function Home() {
                 <td>{advocate.city}</td>
                 <td>{advocate.degree}</td>
                 <td>
-                  {advocate.specialties.map((s) => (
+                  {advocate.specialties && advocate.specialties.map((s) => (
                     <div>{s}</div>
                   ))}
                 </td>
