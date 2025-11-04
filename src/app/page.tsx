@@ -39,7 +39,7 @@ export default function Home() {
         lastName.includes(searchTerm) ||
         city.includes(searchTerm) ||
         degree.includes(searchTerm) ||
-        specialties.includes(searchTerm) ||
+        specialties.some(str => str && str.includes(searchTerm)) ||
         phoneNumber.includes(searchTerm) ||
         yearsOfExperience.includes(searchTerm)
       );
