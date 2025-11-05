@@ -1,12 +1,39 @@
-import db from "../../../db";
-import { advocates } from "../../../db/schema";
-import { advocateData } from "../../../db/seed/advocates";
+import db from '../../../db';
+import { advocates } from '../../../db/schema';
+import { advocateData } from '../../../db/seed/advocates';
+import { or, ilike, eq,inArray } from 'drizzle-orm';
 
-export async function GET() {
-  // Uncomment this line to use a database
-  // const data = await db.select().from(advocates);
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url);
+  const rawQuery = searchParams.get('query');
+  const query = rawQuery ? rawQuery.trim() : null;
 
-  const data = advocateData;
+  if (!query) {
+    const data = await db.select().from(advocates);
+    return Response.json({ data });
+  }
+
+  const whereClauses = [
+    ilike(advocates.firstName, query),
+    ilike(advocates.lastName, query),
+    ilike(advocates.city, query),
+    ilike(advocates.degree, query),
+    inArray(advocates.specialties, [query]),
+  ];
+
+  if (!isNaN(parseInt(query))){
+    whereClauses.push(eq(advocates.yearsOfExperience, parseInt(query)));
+  }
+
+
+  const data = await db
+    .select()
+    .from(advocates)
+    .where(
+      or(
+        ...whereClauses
+      )
+    );
 
   return Response.json({ data });
 }
