@@ -13,11 +13,12 @@ export async function GET(request: Request) {
     return Response.json({ data });
   }
 
+  const fuzzySearchQuery = "%" + query + "%";
   const whereClauses = [
-    ilike(advocates.firstName, query),
-    ilike(advocates.lastName, query),
-    ilike(advocates.city, query),
-    ilike(advocates.degree, query),
+    ilike(advocates.firstName, fuzzySearchQuery),
+    ilike(advocates.lastName, fuzzySearchQuery),
+    ilike(advocates.city, fuzzySearchQuery),
+    ilike(advocates.degree, fuzzySearchQuery),
     inArray(advocates.specialties, [query]),
   ];
 
