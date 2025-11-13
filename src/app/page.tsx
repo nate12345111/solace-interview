@@ -7,6 +7,7 @@ const GET_ADVOCATES_URL = "http://localhost:3000/api/advocates";
 export default function Home() {
   const [advocates, setAdvocates] = useState([]);
   const [filteredAdvocates, setFilteredAdvocates] = useState([]);
+  const [currentSearchTerm, setCurrentSearchTerm] = useState("");
 
   useEffect(() => {
     console.log("fetching advocates...");
@@ -16,6 +17,20 @@ export default function Home() {
   const onChange = (e) => {
     const searchTerm = e.target.value;
 
+
+
+    setCurrentSearchTerm(searchTerm);
+    const filteredAdvocates = advocates.filter((advocate) => {
+      return (
+        advocate.firstName.includes(searchTerm) ||
+        advocate.lastName.includes(searchTerm) ||
+        advocate.city.includes(searchTerm) ||
+        advocate.degree.includes(searchTerm) ||
+        advocate.specialties.includes(searchTerm) ||
+        advocate.yearsOfExperience.includes(searchTerm)
+      );
+    });
+
     fetchAdvocates(searchTerm);
   };
 
@@ -23,6 +38,7 @@ export default function Home() {
     const params = {
       query: searchTerm
     };
+
 
     const url = new URL(GET_ADVOCATES_URL);
     url.search = new URLSearchParams(params).toString();
@@ -38,7 +54,7 @@ export default function Home() {
   }
 
   const onClick = () => {
-    console.log(advocates);
+    setCurrentSearchTerm("")
     setFilteredAdvocates(advocates);
   };
 
