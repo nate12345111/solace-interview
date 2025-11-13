@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+const GET_ADVOCATES_URL = "http://localhost:3000/api/advocates";
+
 
 export default function Home() {
   const [advocates, setAdvocates] = useState([]);
@@ -9,16 +11,12 @@ export default function Home() {
 
   useEffect(() => {
     console.log("fetching advocates...");
-    fetch("/api/advocates").then((response) => {
-      response.json().then((jsonResponse) => {
-        setAdvocates(jsonResponse.data);
-        setFilteredAdvocates(jsonResponse.data);
-      });
-    });
+    fetchAdvocates("");
   }, []);
 
   const onChange = (e) => {
     const searchTerm = e.target.value;
+
 
 
     setCurrentSearchTerm(searchTerm);
@@ -33,8 +31,27 @@ export default function Home() {
       );
     });
 
-    setFilteredAdvocates(filteredAdvocates);
+    fetchAdvocates(searchTerm);
   };
+
+  const fetchAdvocates = async (searchTerm: string) => {
+    const params = {
+      query: searchTerm
+    };
+
+
+    const url = new URL(GET_ADVOCATES_URL);
+    url.search = new URLSearchParams(params).toString();
+
+    fetch(url).then((response) => {
+      response.json().then((jsonResponse) => {
+       if ((searchTerm ==  "") && (advocates.length == 0)) {
+        setAdvocates(jsonResponse.data);
+       }
+        setFilteredAdvocates(jsonResponse.data);
+      });
+    });
+  }
 
   const onClick = () => {
     setCurrentSearchTerm("")
@@ -51,34 +68,30 @@ export default function Home() {
         <p>
           Searching for: <span id="search-term"></span>
         </p>
-        <input style={{ border: "1px solid black" }} onChange={onChange} value={currentSearchTerm} />
-        <button onClick={onClick}>Reset Search</button>
+        <input style={{ border: "1px solid black" }} onChange={onChange} />
+        <button class="bg-blue-700 hover:bg-blue-500 text-white py-1 px-2 rounded-full ml-2" onClick={onClick}>Reset Search</button>
       </div>
       <br />
       <br />
       <table>
         <thead>
-          <tr>
-            <th>First Name</th>
-            <th>Last Name</th>
-            <th>City</th>
-            <th>Degree</th>
-            <th>Specialties</th>
-            <th>Years of Experience</th>
-            <th>Phone Number</th>
-          </tr>
+          <th>Full Name</th>
+          <th>City</th>
+          <th>Degree</th>
+          <th>Specialties</th>
+          <th>Years of Experience</th>
+          <th>Phone Number</th>
         </thead>
         <tbody>
           {filteredAdvocates.map((advocate) => {
             return (
-              <tr>
-                <td>{advocate.firstName}</td>
-                <td>{advocate.lastName}</td>
+              <tr class="pt-3 pb-3">
+                <td>{advocate.firstName} {advocate.lastName}</td>
                 <td>{advocate.city}</td>
                 <td>{advocate.degree}</td>
                 <td>
                   {advocate.specialties.map((s) => (
-                    <div>{s}</div>
+                    <div class="inline-flex m-1 rounded-md bg-gray-200 px-2 py-1 text-xs font-medium text-gray-600 ">{s}</div>
                   ))}
                 </td>
                 <td>{advocate.yearsOfExperience}</td>
