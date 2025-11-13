@@ -53,14 +53,13 @@ export default function Home() {
           Searching for: <span id="search-term"></span>
         </p>
         <input style={{ border: "1px solid black" }} onChange={onChange} />
-        <button onClick={onClick}>Reset Search</button>
+        <button class="bg-blue-700 hover:bg-blue-500 text-white py-1 px-2 rounded-full ml-2" onClick={onClick}>Reset Search</button>
       </div>
       <br />
       <br />
       <table>
         <thead>
-          <th>First Name</th>
-          <th>Last Name</th>
+          <th>Full Name</th>
           <th>City</th>
           <th>Degree</th>
           <th>Specialties</th>
@@ -70,14 +69,13 @@ export default function Home() {
         <tbody>
           {filteredAdvocates.map((advocate) => {
             return (
-              <tr>
-                <td>{advocate.firstName}</td>
-                <td>{advocate.lastName}</td>
+              <tr class="pt-3 pb-3">
+                <td>{advocate.firstName} {advocate.lastName}</td>
                 <td>{advocate.city}</td>
                 <td>{advocate.degree}</td>
                 <td>
                   {advocate.specialties.map((s) => (
-                    <div>{s}</div>
+                    <div class="inline-flex m-1 rounded-md bg-gray-200 px-2 py-1 text-xs font-medium text-gray-600 ">{s}</div>
                   ))}
                 </td>
                 <td>{advocate.yearsOfExperience}</td>
