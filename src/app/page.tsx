@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+const GET_ADVOCATES_URL = "http://localhost:3000/api/advocates";
+
 
 export default function Home() {
   const [advocates, setAdvocates] = useState([]);
@@ -8,33 +10,32 @@ export default function Home() {
 
   useEffect(() => {
     console.log("fetching advocates...");
-    fetch("/api/advocates").then((response) => {
-      response.json().then((jsonResponse) => {
-        setAdvocates(jsonResponse.data);
-        setFilteredAdvocates(jsonResponse.data);
-      });
-    });
+    fetchAdvocates("");
   }, []);
 
   const onChange = (e) => {
     const searchTerm = e.target.value;
 
-    document.getElementById("search-term").innerHTML = searchTerm;
-
-    console.log("filtering advocates...");
-    const filteredAdvocates = advocates.filter((advocate) => {
-      return (
-        advocate.firstName.includes(searchTerm) ||
-        advocate.lastName.includes(searchTerm) ||
-        advocate.city.includes(searchTerm) ||
-        advocate.degree.includes(searchTerm) ||
-        advocate.specialties.includes(searchTerm) ||
-        advocate.yearsOfExperience.includes(searchTerm)
-      );
-    });
-
-    setFilteredAdvocates(filteredAdvocates);
+    fetchAdvocates(searchTerm);
   };
+
+  const fetchAdvocates = async (searchTerm: string) => {
+    const params = {
+      query: searchTerm
+    };
+
+    const url = new URL(GET_ADVOCATES_URL);
+    url.search = new URLSearchParams(params).toString();
+
+    fetch(url).then((response) => {
+      response.json().then((jsonResponse) => {
+       if ((searchTerm ==  "") && (advocates.length == 0)) {
+        setAdvocates(jsonResponse.data);
+       }
+        setFilteredAdvocates(jsonResponse.data);
+      });
+    });
+  }
 
   const onClick = () => {
     console.log(advocates);
